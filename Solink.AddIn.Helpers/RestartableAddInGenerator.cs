@@ -37,6 +37,7 @@ namespace Solink.AddIn.Helpers
 
         public void Generate()
         {
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += (sender, args) => Assembly.ReflectionOnlyLoad(args.Name);
             var assembly = Assembly.ReflectionOnlyLoadFrom(_sourceAssembly.FullName);
             Generate(assembly);
         }
