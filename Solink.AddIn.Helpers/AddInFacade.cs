@@ -3,6 +3,7 @@ using System.AddIn.Hosting;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using log4net;
 
@@ -31,9 +32,15 @@ namespace Solink.AddIn.Helpers
                 Log.Error(message);
                 throw new ArgumentException(message);
             }
+            _addInProcesses = new List<AddInProcess>();
+        }
 
-            var warnings = AddInStore.Rebuild(pipelineFolder.FullName);
-            if (warnings.Length > 0)
+        public AddInFacade() : this(OurAssemblyPipelineFolder) { /* Empty on purpose */ }
+
+        public string[] RebuildPipeline()
+        {
+            var warnings = AddInStore.Rebuild(_pipelineFolder.FullName);
+            if (warnings.Any())
             {
                 const string template = "There were {0} warnings rebuilding the Add-In Store.";
                 var message = String.Format(template, warnings.Length);
@@ -43,10 +50,8 @@ namespace Solink.AddIn.Helpers
                     Log.Warn(warning);
                 }
             }
-            _addInProcesses = new List<AddInProcess>();
+            return warnings;
         }
-
-        public AddInFacade() : this(OurAssemblyPipelineFolder) { /* Empty on purpose */ }
 
         public IList<T> ActivateAddIns<T>(Func<AddInFacade, AddInToken, Platform, T> factory)
         {
