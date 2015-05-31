@@ -20,12 +20,11 @@ namespace Solink.AddIn.Helpers.Test
             CreatePipeLine(pipelineDirectoryInfo);
 
             var addinfacade = new AddInFacade(pipelineDirectoryInfo);
-            var result = addinfacade.RebuildPipeline();
-            Assert.IsTrue(result.Any());
+            Assert.IsTrue(addinfacade.RebuildWarnings.Any());
             var firstwarning = string.Format(
                 "There were no add-in bases found in \"{0}\"",
                 Path.Combine(pipelineDirectoryInfo.FullName, "AddInViews"));
-            Assert.AreEqual(firstwarning, result.First());
+            Assert.AreEqual(firstwarning, addinfacade.RebuildWarnings.First());
         }
 
         private static void CreatePipeLine(DirectoryInfo root)

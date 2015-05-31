@@ -22,6 +22,8 @@ namespace Solink.AddIn.Helpers
         private readonly DirectoryInfo _pipelineFolder;
         private readonly IList<AddInProcess> _addInProcesses;
 
+        public string[] RebuildWarnings { get; set; }
+
         public AddInFacade(DirectoryInfo pipelineFolder)
         {
             _pipelineFolder = pipelineFolder;
@@ -32,12 +34,13 @@ namespace Solink.AddIn.Helpers
                 Log.Error(message);
                 throw new ArgumentException(message);
             }
+            RebuildWarnings = RebuildPipeline();
             _addInProcesses = new List<AddInProcess>();
         }
 
         public AddInFacade() : this(OurAssemblyPipelineFolder) { /* Empty on purpose */ }
 
-        public string[] RebuildPipeline()
+        private string[] RebuildPipeline()
         {
             var warnings = AddInStore.Rebuild(_pipelineFolder.FullName);
             if (warnings.Any())
